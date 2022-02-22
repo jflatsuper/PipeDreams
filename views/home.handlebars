@@ -1,0 +1,6 @@
+<p> this is home</p>
+<p> And this is the signed in user username {{username}}</p>
+<form action="/auth/logout" method="POST">
+    <input hidden name="_csrf" value="{{_csrfToken}}"/>
+    <button type="submit">Logout</button>
+</form>
