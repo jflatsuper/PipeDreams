@@ -1,12 +1,22 @@
-import React from 'react'
-import {Container, Nav, Navbar, NavItem,NavLink,Row,NavDropdown} from 'react-bootstrap'
+import axios from 'axios'
+import React,{useEffect} from 'react'
+import {Container, Nav,Form,Col ,Navbar, NavItem,NavLink,Row,NavDropdown,Button,InputGroup,FormGroup} from 'react-bootstrap'
 import { Outlet } from 'react-router'
-import {Link,LinkContainer} from 'react-router-bootstrap'
-function Welcome(){
+import {Link} from 'react-router-dom'
+import {BsEnvelopeFill} from 'react-icons/bs'
+import {LinkContainer} from 'react-router-bootstrap'
+
+function Welcome({auth,logout}){
+    useEffect(()=>{
+        console.log(auth)
+      
+    },[])
+   
+    
     return(
         <>
         
-        <Row style={{textAlign:"center"}}><h1>PipeDreams</h1>
+        <Row style={{textAlign:"center"}}><h1>PipeDreams{auth._id}</h1>
         </Row> 
         <Navbar variant="light" expand="sm"  style={{backgroundColor:"grey",marginTop:"0",paddingRight:"0",paddingTop:"0"}}>
             
@@ -19,28 +29,35 @@ function Welcome(){
                         <LinkContainer to='/contact'>
                             <Nav.Link>Contact</Nav.Link>
                         </LinkContainer>
-                        <LinkContainer to='#about'>
-                            <Nav.Link>About</Nav.Link>
+                        <LinkContainer to='/order'>
+                            <Nav.Link>Order Now</Nav.Link>
                         </LinkContainer>
                         <NavDropdown title="Account" id='basic-nav-dropdown'>
-                            <LinkContainer to='#'>
+                            {auth?
+                            <><LinkContainer to='#'>
                                 <NavDropdown.Item>
                                     Orders
                                 </NavDropdown.Item>
                             </LinkContainer>
                             <NavDropdown.Divider/>
-                            <LinkContainer to='#'>
+                            <LinkContainer to='/profile'>
                                 <NavDropdown.Item>
                                     Profile
                                 </NavDropdown.Item>
                             </LinkContainer>
                             <NavDropdown.Divider/>
-                            <LinkContainer to='#'>
-                                <NavDropdown.Item>
-                                    Login
-                                </NavDropdown.Item>
-                            </LinkContainer>
                             
+                            
+                            <NavDropdown.Item>
+                                <Button onClick={logout}>Logout</Button>
+                            </NavDropdown.Item>
+                        
+                          </>  :<LinkContainer to='/signin'>
+                            <NavDropdown.Item>
+                                Login
+                            </NavDropdown.Item>
+                        </LinkContainer>
+}
                             
                             
                         </NavDropdown>
@@ -54,7 +71,22 @@ function Welcome(){
         <Outlet/>
         <footer id="about" style={{backgroundColor:"black", color:"ghostwhite"}}>
            <Container className="text-center">
+
                <h3>Stay connected with our Newsletter</h3>
+               <Form>
+                    <FormGroup as={Col}>
+                        <InputGroup>
+                            
+                            <InputGroup.Text>
+                                <BsEnvelopeFill/>
+                            </InputGroup.Text>
+                            
+                            <Form.Control  placeholder="Your email.." />
+                            <Button type="submit" className="btn-secondary">Join Mailing List</Button>
+                        </InputGroup>
+                    </FormGroup>
+                    
+                </Form>
            </Container>
 
         </footer>

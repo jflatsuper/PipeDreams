@@ -60,20 +60,24 @@ app.use(session({
     client:redisClient
   }),
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use('/api',apiRouter)
 app.use(csrf({cookie:true}))
 app.use((req,res,next)=>{
   res.locals._csrfToken=req.csrfToken()
   next()
  })
-app.use(passport.initialize())
-app.use(passport.session())
+
 
 
 app.use('/',indexRouter)
 app.use('/dashboard',authMiddleware,LoginRouter)
 app.use('/auth', authRouter)
 
+// app.get('/getAuth',(req, res,next) => {
+//   console.log(req.user)
+// })
 
 
 

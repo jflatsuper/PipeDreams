@@ -1,28 +1,15 @@
 import React, { useState } from 'react'
 
-import { Form, FormControl, FormGroup, FormLabel,Button } from 'react-bootstrap'
-function Login(){
+import { Form, FormControl, FormGroup, FormLabel,Button, InputGroup } from 'react-bootstrap'
+import {BsFacebook, BsGoogle } from 'react-icons/bs'
+function Login({onFormSubmitLocal,facebookSignin}){
     const[details,setdetails]=useState({
         email:"",
         password:""
     })
-    const[val,setVal]=useState('')
+    
     const[error,setError]=useState('')
-    const onFormSubmitLocal=(e)=>{
-        e.preventDefault()
-        fetch(`/api/login`,{
-           
-            method:'POST',
-            
-            body:JSON.stringify(details),
-            headers:{'Content-Type':'application/json',
-            }
-        })
-        .then(resp=>resp.json())
-        .then(setVal)
-        .catch(err=>{console.log(err.json().errors)})
-
-    }
+   
     const onInputChange=(e)=>{
         const value=e.target.value
         setdetails({
@@ -32,16 +19,11 @@ function Login(){
 
 
     }
-    if(val){
-        return (<p>{val.success}</p>)
-    }
-    if(error){
-        return(<p>{error.errors}</p>)
-    }
+   
     return(
         <>
         
-        <Form  onSubmit={onFormSubmitLocal}>
+        <Form  onSubmit={(e)=>onFormSubmitLocal(e,details)}>
             <FormGroup>
                
                 <FormLabel htmlFor="email">
@@ -60,6 +42,24 @@ function Login(){
 
             </Button>
         
+        </Form>
+        <Form className="col-sm-3" onSubmit={(e)=>facebookSignin(e)}>
+            <FormGroup>
+                <InputGroup>
+                    <InputGroup.Text><BsFacebook color="blue"/></InputGroup.Text>
+                    <Button  type="submit" className="btn-secondary">Sign in with Facebook</Button>
+                </InputGroup>
+            </FormGroup>
+            
+        </Form>
+        <Form className="col-sm-3" >
+            <FormGroup>
+                <InputGroup>
+                    <InputGroup.Text><BsGoogle color="red"/></InputGroup.Text>
+                    <Button >Sign in with Google</Button>
+                </InputGroup>
+            </FormGroup>
+            
         </Form>
         </>
     )

@@ -31,6 +31,7 @@ passport.use(
                         bcrypt.hash(newUser.password,salt,(err, hash)=>{
                             if(err) throw err;
                             newUser.password=hash;
+                            newUser.authId='local'+newUser._id
                             newUser
                                 .save()
                                 .then(user=>{
@@ -61,17 +62,20 @@ passport.use(
 passport.use( new FacebookStrategy({
         clientID:credentials.facebook.appId,
         clientSecret:credentials.facebook.appSecret,
-        callbackURL:(process.env.BASE_URL||'')+"/auth/facebook/callback",
+        callbackURL:(process.env.BASE_URL||'')+"/api/facebook/callback",
+        profileFields: ['id', 'emails', 'name']
 
     },(accessToken,refreshToken,profile,done)=>{
         const authId='facebook:'+profile.id
+        
         User.findOne({authId:authId})
         .then(user=>{
-            console.log(profile)
+            console.log(profile._json.email)
             if(user)return done(null,user)
             const newUser=new User({authId})
             newUser.authId=authId
             newUser.name=profile.displayName
+            newUser.email=profile._json.email
             newUser
                 .save()
                 .then(user=>{

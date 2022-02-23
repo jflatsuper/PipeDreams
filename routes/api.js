@@ -19,25 +19,28 @@ router.post("/login",(req,res,next)=>{
                 return res.status(400).json({errors:err})    
             }
             // return res.redirect('/dashboard')
-            return res.status(200).json({success:`logged in ${user.id}`})
+            
+            return res.status(200).json(user)
         })
     })(req,res)
 })
 router.get('/facebook',(req,res,next)=>{
     if(req.query.redirect)req.session.authRedirect=req.query.redirect
-    passport.authenticate('facebook')(req,res,next)
+    passport.authenticate('facebook',{ scope: ['email']})(req,res,next)
 })
 
 router.get('/facebook/callback',passport.authenticate('facebook',
-    {failureRedirect:"/api/signin"}),(req,res)=>{
-        const redirect=req.session.authRedirect
-        if(redirect)delete req.session.authRedirect
-        res.redirect(303,redirect||'/dashboard')
-    }
+    {successRedirect:"http://localhost:3000/",
+    failureRedirect:"http://localhost:3000/"})
 )
 router.post('/logout',(req,res)=>{
     req.logOut()
     res.redirect('/api/signin')
+})
+router.get('/getAuth',(req, res,next) => {
+   
+   res.json(req.user)
+   console.log(req.isAuthenticated())
 })
 
 
