@@ -1,0 +1,55 @@
+<div>
+    <form class="offset-sm-2 col-sm-8" role="form" action="/addfoodprocess" method="POST" enctype="multipart/form-data">
+        <input name="_csrf" value="{{_csrfToken}}"/>
+        <div class="form-group row mx-2 " >
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" name="name" id="name" required/>
+        </div>
+        <div class="form-group row mx-2" >
+            <label class="form-label" for="type">Type</label>
+            <select class="form-select" name='type' style="text-align: center;" required>
+                <option selected disabled>--Choose a meal type--</option>
+                <option value="Burger">Burger</option>
+                <option value="Taco">Taco</option>
+                <option value="Quesadilla">Quesadilla</option>
+                <option value="Gumbo">Gumbo</option>
+                <option value="Smoothie">Smoothie</option>
+                <option value="Milkshake">Milkshake</option>
+                <option value="Lemonade">Lemonade</option>
+                <option value="Fries">French Fries</option>
+            </select>
+          
+        </div>
+        <div class="form-group row mx-2" >
+            <label class="form-label" for="ingredients">Ingredients</label>
+            <input class="form-control" name="ingredients" id="ingredients" placeholder="Separate the ingredients with a comma" required/>
+        </div>
+        <div class="form-group row mx-2" >
+            <label class="form-label" for="preptime">PrepTime</label>
+            <input class="form-control" name="preptime" id="preptime"  />
+        </div>
+        <div class="form-group row mx-2" >
+            <label class="form-label" for="status">Status</label>
+            <select name="status" class="form-select" required>
+                <option disabled selected>
+                    --Choose the current availability of this meal
+                </option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+            </select>
+            
+        </div>
+        <div class="form-group row mx-2">
+            <label for="description" >Description</label>
+            <input name="description" class="form-control" placeholder="Tell a story or an exciting description with this meal" required>
+        </div>
+        <div class="form-group row mx-2" >
+            <label class="form-label" for="file">Food Image</label>
+            <input class="form-control" type="file" accept="image/jpg,image/png" name="file" id="file" required />
+        </div>
+        
+        <div class="align-center justify-content mx-2">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>

@@ -1,10 +1,14 @@
 import React from 'react'
-import {Navigate} from 'react-router-dom'
+import {Navigate, useLocation} from 'react-router-dom'
 function AuthRoutes({auth,element}){
+   const location=useLocation()
+   
    
    return auth? element:<Navigate 
    to="/signin"
    replace
+   state={location}
+   
    
    />
 

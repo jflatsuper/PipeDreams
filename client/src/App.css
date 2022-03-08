@@ -38,3 +38,42 @@
     transform: rotate(360deg);
   }
 }
+.hover-1-content {
+  position: absolute;
+  bottom: 0;
+  left: 0%;
+  
+  width:100%;
+  z-index: 0;
+  transition: all 2s;
+  text-align: left;
+}
+.hover-1-description {
+  transform: translateY(0.5rem);
+  transition: all 0.4s;
+  
+  opacity: 0;
+}
+
+.hover-1:hover .hover-1-content {
+  left: 0%;
+  height:85%;
+  width: 100%;
+  background-color: black;
+  opacity: 0.5;
+  text-align: left;
+}
+
+.hover-1:hover .hover-1-description {
+  opacity: 1;
+  transform: none;
+  
+}
+
+.hover-1:hover img {
+  left: 0;
+}
+
+.hover-1:hover .hover-overlay {
+  opacity:0.4;
+}
