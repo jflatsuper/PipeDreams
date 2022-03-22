@@ -66,28 +66,7 @@ router.post('/join_newsletter',(req,res)=>{
 })
 router.post('/getfood',async(req,res)=>{
     const allFood= await Food.find({})
-    
-    const f= await Promise.all(allFood.map(async food=>{
-        try{
-            return {food, 
-                    url:await cloudinary.api.resource(food.imglnk,function as(error, result)
-                    {if(error){
-                    return error
-                    }
-                    return result })
-            };
-           
-            
-            
-        }
-        catch(err){
-            throw err
-        }
-        }))
-   
-   
-    
-    return res.json(f)
+    return res.json(allFood)
 })
 router.get('/getCart',async(req,res)=>{
     const userCart=await Carts.findOne({_id:req.user._id})
@@ -96,61 +75,97 @@ router.get('/getCart',async(req,res)=>{
 
 })
 router.post('/updateCart',async(req,res)=>{
-    console.log(req.body.food._id)
-    const id=req.body.food._id
-    let t=null
-  
-    Carts.findOne({_id:req.user._id,'products._id':req.body.food._id},async function (
-        err,
-        existingproduct
-      ){
-          if(existingproduct===null){
-             t=await Carts.findOneAndUpdate(
-                { _id:req.user._id, status: "active",},
-                {$push:{
-                    products:{
-                        
-                            '_id':req.body.food._id,
-                            'name':req.body.food.name,
-                            'type':req.body.food.type,
-                            'status':req.body.food.status,
-                            'price':req.body.food.price,
-                            'preptime':req.body.food.preptime,
-                            'imglink':req.body.food.imglink,
-                            'description':req.body.food.description,
-                            'num':1
+    console.log(req.body._id)
+    const id=req.body._id
+    let t=null 
+    
+    const foods=await Food.findOne({_id:id})
+    console.log(foods)
+    if(req.body.action==='plus'){
+        Carts.findOne({_id:req.user._id,'products._id':id},async function (
+            err,
+            existingproduct
+          ){
+              if(existingproduct===null){
+                
+                 t=await Carts.findOneAndUpdate(
+                    { _id:req.user._id, status: "active",},
+                    {$push:{
+                        products:{
                             
+                                '_id':id,
+                                'name':foods.name,
+                                'type':foods.type,
+                                'status':foods.status,
+                                'price':foods.price,
+                                'preptime':foods.preptime,
+                                'imglink':foods.imglink,
+                                'imgurl':foods.imgurl,
+                                'description':foods.description,
+                                'num':1
+                                
+                                
+                    
                             
-                
-                        
-                    }
-                } },
-                {
-                    new: true,
-                    upsert:true
-              });
-              res.json(t)
-              console.log(t)
-                
+                        }
+                    } },
+                    {
+                        new: true,
+                        upsert:true
+                  });
+                  res.json(t)
+                  console.log(t)
+                    
+                  
+    
+    
+              }else{
+                t=await Carts.findOneAndUpdate(
+                    { _id:req.user._id, status: "active","products._id":id },
+                    { $inc: {'products.$.num':1}},
+                    {
+                        new: true,
+                        multi: true ,
+                        upsert:true
+                  });
+                  res.json(t)
+                  console.log(t)
+                    
+                  
+    
+              }
+          })
+    }else{
+        let find=await Carts.findOne({ _id:req.user._id, status: "active" })
+        let q=find.products.find(t=>t._id===id)
+        if(!q){
+            res.json(find)
+
+        }
+        else if(q.num===1){
+           t=await Carts.findOneAndUpdate(
+               { _id: req.user._id }, 
+               { $pull: { "products": { "_id": id } }},
+               { new: true, multi:true })
+            res.json(t)
+            console.log(t)
+
+        }
+        else if(q.num>1){
+        t=await Carts.findOneAndUpdate(
+            { _id:req.user._id, status: "active","products._id":id },
+            { $inc: {'products.$.num':-1}},
+            {
+                new: true,
+                multi: true ,
+                upsert:true
+          });
+          res.json(t)
+          console.log(t)
               
-
-
-          }else{
-            t=await Carts.findOneAndUpdate(
-                { _id:req.user._id, status: "active","products._id":req.body.food._id },
-                { $inc: {'products.$.num':1}},
-                {
-                    new: true,
-                    multi: true ,
-                    upsert:true
-              });
-              res.json(t)
-              console.log(t)
-                
-              
-
-          }
-      })
+    }
+}
+    
  
     
     // const Cart=await Carts.updateOne(
@@ -188,7 +203,12 @@ router.post('/updateCart',async(req,res)=>{
         })
         console.log(removed)
         const t= await saveOrder.save()
-        console.log(t)
+        res.json(t)
+    })
+    router.get('/getOrders', async(req,res)=>{
+        const orders= await Order.find({userId:req.user._id})
+        res.json(orders)
+
     })
 
 module.exports=router

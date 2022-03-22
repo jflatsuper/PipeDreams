@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React from 'react'
+import { Card ,Container} from 'react-bootstrap';
 import {PaystackButton} from 'react-paystack'
 
 const CartTotal=({cartnum,auth,changeCart})=>{
@@ -12,12 +13,12 @@ const CartTotal=({cartnum,auth,changeCart})=>{
     }
     
     
-    const handlePaystackSuccessAction = (reference) => {
+    const handlePaystackSuccessAction = async (reference) => {
         // Implementation for whatever you want to do with reference and after success call.
         
         console.log(reference);
        
-        changeCart(reference,checked)
+        await changeCart(reference,checked)
         
       };
   
@@ -40,11 +41,32 @@ const CartTotal=({cartnum,auth,changeCart})=>{
     onSuccess:(reference) => handlePaystackSuccessAction(reference),
     onClose: handlePaystackCloseAction,
   }
+  return (
+    <>
+    <Container style={{height:'auto'}}>
+      <Card style={{height:'50vh'}} className='mt-2'>
+        <Card.Body>
+          <p>Total: {total}</p>
+
+        </Card.Body>
+        <Card.Footer className='text-center'>
+          <PaystackButton className='btn btn-primary' {...componentProps} />
+
+        </Card.Footer>
+      </Card>
+      
+    
+
+
+
+    </Container>
+    </>
+  )
    
    
 
-    return <div><p>{total}</p><PaystackButton {...componentProps} />
-     </div>
+    // return <div><p>{total}</p><PaystackButton {...componentProps} />
+    //  </div>
 
 }
 export default CartTotal

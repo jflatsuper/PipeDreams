@@ -42,7 +42,9 @@ router.post('/addfoodprocess',async (req,res)=>{
       newFood.ingredients=fields.ingredients[0].split(',')
       newFood.type=fields.type[0]
       newFood.status=fields.status[0]
+      newFood.price=fields.price[0]
       newFood.imglnk=img.public_id
+      newFood.imgurl=img.secure_url
       newFood.description=fields.description[0]
      
       await newFood.save()

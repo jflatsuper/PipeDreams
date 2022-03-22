@@ -1,9 +1,14 @@
 import React,{useEffect, useState} from 'react'
 import CartTotal from './CartTotal'
-import { Card, Col,Row,  FormCheck } from 'react-bootstrap'
+import { Card, Col,Row,  FormCheck, Image,Container } from 'react-bootstrap'
+import {BsFillDashSquareFill,BsFillPlusSquareFill,BsAlarmFill} from 'react-icons/bs'
+import LoadingOverlay from 'react-loading-overlay'
 import CardHeader from 'react-bootstrap/esm/CardHeader'
-function Cart({cart,auth,changeCart}){
+import cartempty from './images/emptycart.png'
+import { Link } from 'react-router-dom'
+function Cart({cart,auth,changeCart,onAddCart}){
     const [cartnum, setCartNum]=useState([])
+    const [loading,setloading]=useState(false)
    
     const onChange=async (e,id)=>{
         
@@ -30,37 +35,122 @@ function Cart({cart,auth,changeCart}){
         (async()=>{
             const x=await cart.products.map((cartitem)=>({...cartitem,check:true}))
             await setCartNum(x)
+         
             
 
         })(),[cart])
+        const cartfunctions= async (e,action,id)=>{
+            await setloading(true)
+            
+            const t=await onAddCart(e,action,id)
+            setloading(t)
+           
+            
+
+        }
         
     
    
-    if(!cart){
-        return <p>there is nothing in your cart</p>
+    if(cartnum.length===0){
+        return (
+            <Container style={{minHeight:'80vh',backgroundColor:'white'}} className="d-flex align-items-center justify-content-center ">
+                <Row  >
+                    <Row>
+                        <Image src={cartempty} height="100px" className="mx-auto d-block" style={{width:'200px',color:'blue'}}/>
+
+                    </Row>
+                    
+                    <Row className="text-center">
+                        <p><b>Your Cart is empty.</b><Link to ="/#food">Start Ordering Now</Link></p>
+                        
+                    </Row>
+                    
+
+                </Row>
+            
+                
+                
+            </Container>
+        )
     }
     return (
-
         <>
-        <Row xs={1} md={2} lg={2}>
-            <Col className='col-lg-8' >
-            {cartnum.map(cartitem=>(
-            <Card key={cartitem._id}>
-                <CardHeader>{cartitem.name}</CardHeader>
-                <Card.Body><FormCheck defaultChecked onChange={(e)=>onChange(e,cartitem._id)}/>{cartitem.num}</Card.Body>
-                
-            </Card>
-         ))} 
+        <Row xs={1} lg={2}>
+            <Col lg={8} md={8} xs={12}>
+                {cartnum.map(cartitem=>(
+                <Row key={cartitem._id} xs={1}>
+                    <Col>
+                        <Card  className="shadow my-2  rounded">
+
+                            <Card.Body >
+                                <Row style={{width:'100%'}} lg={2} xs={2}>
+                                    <Col style={{height:'100px'}} className="d-flex align-items-center" lg={1} xs={2} >
+                                        <FormCheck
+                                        defaultChecked={cartitem.check}
+                                        value={cartitem.check}
+                                        id={cartitem._id}
+                                        onChange={(e)=>onChange(e,cartitem._id)} />
+                                    </Col>
+                                    <Col xs={10} lg={10} >
+                                        <Row style={{height:'100px'}}>
+                                            <Col style={{height:'100%'}} lg={2}  xs={6}>
+                                                <Image src={'{cartitem.imgurl}'} thumbnail style={{height:'90%',width:'100%',objectFit:'cover'}}/>
+
+                                            </Col>
+                                            <Col lg={10} xs={6}>
+                                                <Row xs={1} lg={1}>
+                                                    <Col xs={12}>
+                                                        <b><p><span style={{width:'100%',overflowY:'clip',textOverflow:'ellipsis',whiteSpace:'nowrap',float:'left'}}>{cartitem.name}</span><span >&#8358;{cartitem.price}</span></p></b>
+                                                        <p>
+                                                            
+                                                                <BsFillPlusSquareFill onClick={(e)=>cartfunctions(e,'plus',cartitem._id)} />
+                                                                <span className="mx-2"> {cartitem.num}</span>
+                                                                <BsFillDashSquareFill onClick={(e)=>cartfunctions(e,'minus',cartitem._id)}/>
+
+                                                            
+                                                                <span style={{float:'right'}}>{cartitem.preptime} mins |<BsAlarmFill/></span>
+                                                                {/* onClick={(e)=>remove(e,cartitem.id)}style={{color:'yellowgreen'}} */}
+                                                        </p>
+                                                    </Col>
+                                                    
+                                                        
+                                                    
+                                                </Row>
+                                            
+                                            
+                                                
+                                            </Col>
+                                            
+                                        </Row>
+                                        
+                                        
+                                    </Col>
+
+                                </Row>
+                        
+                            </Card.Body>
+
+                        </Card>
+                    </Col>
+                    
+
+                </Row>
+            
+                )) }
             </Col>
-            <Col className='col-lg-4' style={{height:'100vh'}}>
+            <Col lg={4} md={4} xs={12} style={{height:'100vh'}}>
                 <CartTotal
                     cartnum={cartnum}
                     changeCart={changeCart}
                     auth={auth}
+                  
                     />
             </Col>
         </Row>
-         
+        
+           
+
+       
         </>
     )
 

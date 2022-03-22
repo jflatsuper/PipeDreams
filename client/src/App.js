@@ -13,6 +13,12 @@ import AuthRoutes from './AuthenticatedRoutes';
 import OrderPage from './AuthComp/OrderPage';
 import Foodpage from './FoodPage';
 import Cart from './Cart';
+import Orders from './Orders';
+import SingleOrder from './SingleOrder'
+import NotFound from './NotFound';
+import Address from './Address'
+import Pending from './Pending';
+import Completed from './Completed';
 
 function App() {
   const navigate=useNavigate()
@@ -23,13 +29,13 @@ function App() {
   const [cart,setCart]=useState({})
   const [foods,setFood]=useState([])
   const [val,setVal]=useState({})
+  const [orders,setOrders]=useState([])
   
 
   useEffect(()=>{
+    // let [value1, value2] = await Promise.all(axios.get('/api/getAuth').data, axios.post('/api/getfood').data);
    axios.get('/api/getAuth')
-   .then(async res=>{
-     await setAuth(res.data)
-     console.log(res.data)})
+   .then(res=>setAuth(res.data))
   
    .then( axios.post('/api/getfood')
    .then(async res=>{
@@ -48,34 +54,25 @@ function App() {
   
 
   },[])
-  const onAddCart=async(e,action,food)=>{
-    e.persist()
-    
-        switch (action) {
-            case 'plus':
-                axios.post('/api/updateCart',food)
-                .then(async res=> await setCart(res.data)
-                    
-                )
-                .catch(err=>console.log(err)
-                )
-                setNum(num+1)
-                
-                break;
-            case 'minus':
-                if(num===0){
-                    setNum(0)
-
-                }else setNum(num-1)
-                
-                
-                 break;
-        
-            default:
-
-                break;
-        }
+  useEffect(()=>{
    
+    (setAllOrders)()
+        
+  },[auth])
+  const  setAllOrders=async()=>{
+    axios.get('/api/getOrders')
+    .then(async resp=>{
+        await setOrders(resp.data)
+        console.log(resp)})
+  }
+
+ 
+  const onAddCart=async(e,action,foodid)=>{ 
+    e.persist()
+    const f=await axios.post('/api/updateCart',{_id:foodid,action:action})
+    
+    setCart(f.data)
+    return false
 }
 
   useEffect(()=>{
@@ -96,13 +93,17 @@ function App() {
   }
  const changeCart=async(reference,checked)=>{
   
-  axios.post('/api/saveOrder',{reference:reference.reference,transid:reference.trans,checked:checked}).then(console.log('done'))
-  let newcart=cart.products
-  for(let i of checked){
-  newcart=newcart.filter(cartitem=>cartitem._id!==i._id)
-  console.log(newcart)
+      axios.post('/api/saveOrder',{reference:reference.reference,transid:reference.trans,checked:checked}).then(resp=>{
+        console.log(resp)
+        setOrders([...orders,resp.data])
+      })
+      let newcart=cart.products
+      for(let i of checked){
+      newcart=newcart.filter(cartitem=>cartitem._id!==i._id)
+      console.log(newcart)
 }
   await setCart({...cart,products:newcart})
+  
  } 
  const onFormSubmitLocal=(e,body)=>{
   e.preventDefault()
@@ -122,7 +123,7 @@ function App() {
   }
   
   const food=async(id)=>{
-      const f=await foods.find((t)=>t.food._id===id)
+      const f=await foods.find((t)=>t._id===id)
       await console.log(f)
       return f
     
@@ -144,6 +145,7 @@ function App() {
       <>
         <div >
         <Routes>
+          
         <Route path="signin" element={<Login
 
             onFormSubmitLocal={onFormSubmitLocal}
@@ -155,14 +157,16 @@ function App() {
             cart={cart}
             logout={logout}/>
             }>
+              <Route path="*" element={<NotFound/>}/>
             <Route path="profile" element={<AuthRoutes 
             element={<Profile/>}
             auth={auth}/>}/>
             
             <Route path="about" element={<About/>}/>
-            <Route path="menu" element={<Menu/>}/>
+            <Route path="address" element={<Address/>}/>
+            {/* <Route path="menu" element={<Menu/>}/> */}
             <Route path="contact" element={<Contact/>}/>
-            <Route path='order' element={
+            <Route path='' element={
               <OrderPage
                 foods={foods}
                 
@@ -173,10 +177,42 @@ function App() {
             element={<Cart 
             cart={cart}
             changeCart={changeCart}
+            onAddCart={onAddCart}
+            
             auth={auth}/>}
             auth={auth}/>}
             
             />
+            <Route path='orders' element ={
+              <AuthRoutes
+                element={
+                  <Orders
+                  />}
+                auth={auth}
+              />
+            }>
+              <Route path='pending' element={
+                <Pending
+                  orders={orders.filter(order=>order.completed===false)}
+                    />
+              }/>
+
+              <Route path='completed' element={
+                <Completed
+                  orders={orders.filter(order=>order.completed===true)}
+                />
+              }/>
+            </Route>
+             <Route path='orders/:id' element ={
+              <AuthRoutes
+                element={
+                <SingleOrder 
+                  orders={orders}
+                />}
+                auth={auth}
+              />
+            }/>
+
             <Route path='order/:name/:id' element={
               <Foodpage
                 f={food}

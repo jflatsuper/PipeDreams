@@ -77,3 +77,6 @@
 .hover-1:hover .hover-overlay {
   opacity:0.4;
 }
+.active{
+  background-color: grey;
+}
