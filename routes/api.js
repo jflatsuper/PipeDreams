@@ -41,7 +41,9 @@ router.get('/facebook/callback',passport.authenticate('facebook',
 )
 router.post('/logout',(req,res)=>{
     req.logOut()
-    res.redirect('/api/signin')
+    console.log('this is ')
+    res.json(req.user)
+    
 })
 router.get('/getAuth',(req, res,next) => {
    
@@ -69,9 +71,16 @@ router.post('/getfood',async(req,res)=>{
     return res.json(allFood)
 })
 router.get('/getCart',async(req,res)=>{
-    const userCart=await Carts.findOne({_id:req.user._id})
-    console.log(userCart)
-    res.json(userCart)
+    if(req.user){
+        console.log('error is from ')
+        console.log(req.user)
+        const userCart=await Carts.findOne({_id:req.user._id})
+        console.log(userCart)
+        return res.json(userCart)
+        
+    }
+    res.json({})
+    
 
 })
 router.post('/updateCart',async(req,res)=>{
@@ -206,8 +215,13 @@ router.post('/updateCart',async(req,res)=>{
         res.json(t)
     })
     router.get('/getOrders', async(req,res)=>{
-        const orders= await Order.find({userId:req.user._id})
-        res.json(orders)
+        if(req.user?._id){
+            const orders= await Order.find({userId:req.user._id})
+            return res.json(orders)
+           
+        }
+        
+        return res.json([])
 
     })
 

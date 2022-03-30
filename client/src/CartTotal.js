@@ -43,8 +43,8 @@ const CartTotal=({cartnum,auth,changeCart})=>{
   }
   return (
     <>
-    <Container style={{height:'auto'}}>
-      <Card style={{height:'50vh'}} className='mt-2'>
+    <Container fluid style={{height:'auto'}} className='g-0 px-0'>
+      <Card style={{height:'auto'}} className='mt-2'>
         <Card.Body>
           <p>Total: {total}</p>
 

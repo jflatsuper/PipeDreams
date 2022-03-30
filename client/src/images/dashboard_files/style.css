@@ -1,0 +1,43 @@
+.body {
+  
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: rgba(119, 136, 153, 0.5);
+}
+
+a {
+  color: #00B7FF;
+  
+}
+.nav-link{
+  color: grey;
+}
+.first-div{
+  margin-top: 3%;
+  background-color: rgba(119, 136, 153, 0);
+  height:50vh
+}
+.second-div{
+  background-color: lightgray;
+  height:50vh
+
+}
+.footer{
+  position: relative;
+
+  bottom: 0;
+  background-color: black;
+  color:white;
+ 
+  padding: 3%;
+
+}
+.disclaimer{
+  font-size: xx-small;
+}
+.footlog{
+  font-size:10px
+}
+.sign{
+  min-height:85vh
+ 
+}

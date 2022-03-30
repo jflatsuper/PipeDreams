@@ -43,7 +43,7 @@ function Welcome({auth,logout,cart}){
 
        </Container>
         
-        <Navbar variant="light" expand="sm"  style={{backgroundColor:"grey",marginTop:"0",paddingRight:"0",paddingTop:"0"}} collapseOnSelect>
+        <Navbar variant="light" expand="sm" sticky='top'  style={{backgroundColor:"grey",marginTop:"0",paddingRight:"0",paddingTop:"0"}} collapseOnSelect>
        
             <Navbar.Toggle aria-controls="basic-navbar-nav"/>
             <Navbar.Collapse id="basic-navbar-nav">
@@ -99,12 +99,12 @@ function Welcome({auth,logout,cart}){
                 
              
         </Navbar>
-        <Container fluid style={{minHeight:'84vh',backgroundColor:'darkgrey'}} className="py-2">
+        <Container fluid style={{backgroundColor:'darkgrey',minHeight:'90vh'}} className="py-2 ">
             <Outlet/>
 
         </Container>
        
-        <footer id="about" className="px-2 pt-2 pb-2" style={{backgroundColor:"black", color:"ghostwhite"}}>
+        <footer id="about" className="px-2 pt-2 pb-2" style={{position:'relative',bottom:'0',backgroundColor:"black", color:"ghostwhite"}}>
            <Container className="text-center">
                <Form onSubmit={join_newsletter}>
                     <FormGroup as={Col}>

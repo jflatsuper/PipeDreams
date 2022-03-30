@@ -1,18 +1,26 @@
 import React, { useEffect,useState } from 'react'
 import axios from 'axios'
-import {Container,Row,Col,Image, FormControl, Button} from 'react-bootstrap'
+import {Container,Row,Col,Image, FormControl, Button,Spinner} from 'react-bootstrap'
 import { useParams,Link } from 'react-router-dom'
 import { Stack } from 'react-bootstrap'
 import { BsCartPlus, BsCartPlusFill, BsFileMinus, BsFillDashSquareFill, BsFillPlusSquareFill } from 'react-icons/bs'
 function  Foodpage({f,onAddCart,num}){
    
     const {id}=useParams()
-    const [food,setSingleFood]=useState(null)    
+    const [food,setSingleFood]=useState(null) 
+    const [loading,setLoading]=useState(false)   
     useEffect(()=>(async()=>{
         const t=await f(id)
         console.log(t)
         setSingleFood(t)})()
     ,[])
+    const addtoCart=async (e)=>{
+        e.preventDefault()
+        setLoading(true)
+        const response=await onAddCart(e,'plus',food._id)
+        setLoading(response)
+
+    }
     
     
     
@@ -37,10 +45,13 @@ function  Foodpage({f,onAddCart,num}){
 
                 </ul>
                 <Row>
-                    <Button className='bg-dark'  onClick={(e)=>onAddCart(e,'plus',food._id)}>
-                        <BsCartPlus style={{color:'grey'}}/>
-                    </Button>
-                    
+                {loading?<Button className='bg-dark'  >
+                            <Spinner animation="border" size="sm" className='text-center' />
+                        </Button>:
+                        <Button className='bg-dark'  onClick={addtoCart}>
+                            <BsCartPlus style={{color:'grey'}}/>
+                        </Button>
+                }
                     {/* {num}
                     <BsFillDashSquareFill onClick={(e)=>onAddCart(e,'minus',food._id)}/> */}
                 </Row>

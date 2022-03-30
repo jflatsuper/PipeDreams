@@ -33,36 +33,28 @@ function App() {
   
 
   useEffect(()=>{
-    // let [value1, value2] = await Promise.all(axios.get('/api/getAuth').data, axios.post('/api/getfood').data);
    axios.get('/api/getAuth')
-   .then(res=>setAuth(res.data))
+   .then(res=>setAuth(res.data));
   
-   .then( axios.post('/api/getfood')
-   .then(async res=>{
-              await setFood(res.data)
-              // setLoading(false)
-              console.log(res.data)}
-              
-          )
-    
-    )
-   
-    
-
-
-   
-  
-
   },[])
+
+
   useEffect(()=>{
-   
-    (setAllOrders)()
-        
-  },[auth])
+    axios.get('/api/getCart')
+    .then(res=>{
+       setCart(res.data)
+       console.log(res)
+     });
+ 
+     (setAllOrders)()
+ 
+   },[auth])
+
+
   const  setAllOrders=async()=>{
     axios.get('/api/getOrders')
-    .then(async resp=>{
-        await setOrders(resp.data)
+    .then(resp=>{
+        setOrders(resp.data)
         console.log(resp)})
   }
 
@@ -73,21 +65,27 @@ function App() {
     
     setCart(f.data)
     return false
-}
+  }
 
   useEffect(()=>{
-    axios.get('/api/getCart')
-    .then(async res=>{
-      await setCart(res.data)
-      console.log(res)
-    })
+    axios.post('/api/getfood')
+    .then(res=>{
+      setFood(res.data)
+      console.log(res.data)
+              }
+               
+           )
+    },[])
 
-  },[])
   const logout=(e)=>{
     e.preventDefault()
     axios.post('/api/logout')
-    .then(setAuth(''))
-    navigate('/', {replace:true})
+    .then(setAuth());
+    
+      navigate('/', {replace:true})
+
+    
+    
     
 
   }
@@ -101,34 +99,26 @@ function App() {
       for(let i of checked){
       newcart=newcart.filter(cartitem=>cartitem._id!==i._id)
       console.log(newcart)
-}
-  await setCart({...cart,products:newcart})
+      }
+      await setCart({...cart,products:newcart})
   
  } 
  const onFormSubmitLocal=(e,body)=>{
-  e.preventDefault()
-  // console.log(location)
-  axios.post(`/api/login`,body)
-  .then(async (resp)=>{
-    await setAuth(resp.data)
-    navigate(state||'/', {replace:true})
-    })
-  .then(console.log(auth)) 
-  .catch(err=>{console.log(err)})
-
- 
-
-  
-
+    e.preventDefault()
+    // console.log(location)
+    axios.post(`/api/login`,body)
+    .then(async (resp)=>{
+      await setAuth(resp.data)
+      navigate(state||'/', {replace:true})
+      })
+    .then(console.log(auth)) 
+    .catch(err=>{console.log(err)})
   }
   
   const food=async(id)=>{
       const f=await foods.find((t)=>t._id===id)
       await console.log(f)
       return f
-    
-    
-    
   }
   const facebookSignin=(e)=>{
     e.preventDefault()

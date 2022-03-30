@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import CartTotal from './CartTotal'
-import { Card, Col,Row,  FormCheck, Image,Container } from 'react-bootstrap'
+import { Card, Col,Row,  FormCheck, Image,Container,Spinner } from 'react-bootstrap'
 import {BsFillDashSquareFill,BsFillPlusSquareFill,BsAlarmFill} from 'react-icons/bs'
 import LoadingOverlay from 'react-loading-overlay'
 import CardHeader from 'react-bootstrap/esm/CardHeader'
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 function Cart({cart,auth,changeCart,onAddCart}){
     const [cartnum, setCartNum]=useState([])
     const [loading,setloading]=useState(false)
+    const [obj,setobj]=useState()
    
     const onChange=async (e,id)=>{
         
@@ -40,10 +41,12 @@ function Cart({cart,auth,changeCart,onAddCart}){
 
         })(),[cart])
         const cartfunctions= async (e,action,id)=>{
-            await setloading(true)
+            
+            setloading(id)
+           
             
             const t=await onAddCart(e,action,id)
-            setloading(t)
+            setloading()
            
             
 
@@ -101,16 +104,18 @@ function Cart({cart,auth,changeCart,onAddCart}){
                                                 <Row xs={1} lg={1}>
                                                     <Col xs={12}>
                                                         <b><p><span style={{width:'100%',overflowY:'clip',textOverflow:'ellipsis',whiteSpace:'nowrap',float:'left'}}>{cartitem.name}</span><span >&#8358;{cartitem.price}</span></p></b>
-                                                        <p>
-                                                            
-                                                                <BsFillPlusSquareFill onClick={(e)=>cartfunctions(e,'plus',cartitem._id)} />
-                                                                <span className="mx-2"> {cartitem.num}</span>
-                                                                <BsFillDashSquareFill onClick={(e)=>cartfunctions(e,'minus',cartitem._id)}/>
+                                                        
+                                                            {loading===cartitem._id?<Spinner animation='border' size='sm'/>:
+                                                                <span id={`${cartitem._id}`}>
+                                                                    <BsFillPlusSquareFill onClick={(e)=>cartfunctions(e,'plus',cartitem._id)} />
+                                                                        <span className="mx-2"> {cartitem.num}</span>
+                                                                    <BsFillDashSquareFill  name={cartitem._id} onClick={(e)=>cartfunctions(e,'minus',cartitem._id)}/>
+                                                                </span>   }
 
                                                             
                                                                 <span style={{float:'right'}}>{cartitem.preptime} mins |<BsAlarmFill/></span>
                                                                 {/* onClick={(e)=>remove(e,cartitem.id)}style={{color:'yellowgreen'}} */}
-                                                        </p>
+                                                        
                                                     </Col>
                                                     
                                                         
@@ -138,7 +143,7 @@ function Cart({cart,auth,changeCart,onAddCart}){
             
                 )) }
             </Col>
-            <Col lg={4} md={4} xs={12} style={{height:'100vh'}}>
+            <Col lg={4} md={4} xs={12}>
                 <CartTotal
                     cartnum={cartnum}
                     changeCart={changeCart}
